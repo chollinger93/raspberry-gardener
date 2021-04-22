@@ -29,9 +29,9 @@ morse_cording = {'A': ['.', '-'],               'B': ['-', '.', '.', '.'],      
                  '9': ['-', '-', '-', '-', '.']
                  }
 
-# Other
-led = 12
-uv_led = 26
+# Ports
+MAIN_LED = 12
+DONE_LED = 26
 
 
 def translate_morse(msg: str) -> list:
@@ -67,7 +67,6 @@ def setup(*leds):
 
 def teardown(*leds):
     for led in leds:
-        setup(led)
         GPIO.output(led, GPIO.LOW)
 
 
@@ -91,11 +90,9 @@ def send_msg(data: list, led=12, done_led=26):
 
 GPIO.setwarnings(False)
 
-in_msg = 'SOS'
-#in_msg='loesch dich'
+in_msg = input('Message: ')
 msg = translate_morse(in_msg)
-print(msg)
 send_msg(msg)
 
 # Turn off afterwards
-teardown(12, 25)
+teardown(MAIN_LED, DONE_LED)
