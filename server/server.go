@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -85,10 +86,10 @@ func newApp() *App {
 type Sensor struct {
 	SensorId     string
 	TempC        float32
-	VisLight     float32
-	IrLight      float32
+	VisLight     int32
+	IrLight      int32
 	UvIx         float32
-	RawMoisture  float32
+	RawMoisture  int32
 	VoltMoisture float32
 }
 
@@ -116,15 +117,23 @@ func (a *App) sendErr(w http.ResponseWriter, msg string, code int) {
 
 func (a *App) RetrieveSensorDataHandler(w http.ResponseWriter, r *http.Request) {
 	var s []Sensor
-	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
-	if err := decoder.Decode(&s); err != nil {
+	raw, err := ioutil.ReadAll(r.Body)
+	if err != nil {
 		zap.S().Error(err)
 		a.sendErr(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
-	err := a.storeData(s)
+	zap.S().Debugf("Raw: %v", string(raw))
+	err = json.Unmarshal(raw, &s)
+	if err != nil {
+		zap.S().Error(err)
+		a.sendErr(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	err = a.storeData(s)
 	if err != nil {
 		zap.S().Error(err)
 		a.sendErr(w, "Bad Request", http.StatusBadRequest)
