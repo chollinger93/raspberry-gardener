@@ -20,6 +20,7 @@ sudo sed -i 's/export //g' /opt/raspberry-gardener/.env.sh
 
 Install `systemd` service:
 ```
+sudo mkdir -p /var/log/raspberry-gardener/
 sudo cp raspberry-gardener.service /etc/systemd/system/
 sudo systemctl start raspberry-gardener
 sudo systemctl enable raspberry-gardener # Autostart
