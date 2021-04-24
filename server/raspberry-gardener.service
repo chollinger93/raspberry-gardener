@@ -1,0 +1,12 @@
+[Unit]
+After=network.target
+Wants=network-online.target
+
+[Service]
+Restart=always
+EnvironmentFile=/opt/raspberry-gardener/.env.sh
+WorkingDirectory=/opt/raspberry-gardener
+ExecStart=/opt/raspberry-gardener/sensor-server 
+
+[Install]
+WantedBy=multi-user.target 
