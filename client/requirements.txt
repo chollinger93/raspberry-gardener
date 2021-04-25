@@ -2,3 +2,6 @@ adafruit-circuitpython-mcp3xxx
 smbus2
 adafruit-circuitpython-mcp9808
 SI1145
+get-mac
+requests
+Adafruit-Blinka
