@@ -8,5 +8,6 @@ CREATE OR REPLACE TABLE `sensors`.`data` (
     `UvIx`                  FLOAT,
     `RawMoisture`           FLOAT,
     `VoltMoisture`          FLOAT,
+    `MeasurementTs`         TIMESTAMP,
     `lastUpdateTimestamp`   TIMESTAMP
 );
