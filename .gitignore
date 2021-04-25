@@ -145,3 +145,4 @@ moist/*
 !moist/README.md
 server/.env.*sh
 !server/.env.sample.sh
+*.jpg
