@@ -15,6 +15,7 @@ import requests
 import logging
 import json
 import argparse
+from datetime import datetime, timezone
 
 # mcp9808
 def read_temp() -> int:
@@ -39,7 +40,9 @@ def read_moisture(spi_chan: object) -> tuple:
 def get_machine_id():
     return '{}-{}'.format(platform.uname().node, getmac.get_mac_address())
 
-def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0):
+def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_rest=False):
+    if disable_rest:
+        logger.warning('Rest endpoint disabled')
     buffer=[]
     ## UV
     uv_sensor = SI1145.SI1145()
@@ -70,7 +73,8 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0):
                 'irLight': ir,
                 'uvIx': uv_ix,
                 'rawMoisture': raw_moisture,
-                'voltMoisture': volt_moisture
+                'voltMoisture': volt_moisture,
+                'measurementTs': datetime.now(timezone.utc).isoformat() # RFC 3339
             }
 
             # Only send if we have all 
@@ -79,16 +83,19 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0):
                 logger.warning('No measurements: {}'.format(reading))
                 continue
 
-            buffer.append(reading)
-            logger.debug(reading)
-            if len(buffer) >= buffer_max:
-                logger.debug('Flushing buffer')
-                # Send
-                logger.debug('Sending: {}'.format(json.dumps(buffer)))
-                response = requests.post(rest_endpoint, json=buffer)
-                logger.debug(response)
-                # Reset
-                buffer = []
+            if not disable_rest:
+                buffer.append(reading)
+                logger.debug(reading)
+                if len(buffer) >= buffer_max:
+                    logger.debug('Flushing buffer')
+                    # Send
+                    logger.debug('Sending: {}'.format(json.dumps(buffer)))
+                    response = requests.post(rest_endpoint, json=buffer)
+                    logger.debug(response)
+                    # Reset
+                    buffer = []
+            else:
+                logger.info(reading)
         except Exception as e:
             logger.exception(e)
         finally:
@@ -103,11 +110,19 @@ if __name__ == '__main__':
     parser.add_argument('--frequency', dest='frequency_s', required=False, default=1, type=int)
     parser.add_argument('--buffer_max', dest='buffer_max', required=False, default=10, type=int)
     parser.add_argument('--spi_in', dest='spi_in', required=False, default=0, type=int)
+    parser.add_argument('--disable_rest', dest='disable_rest', required=False, default=False, action='store_true')
     args = parser.parse_args()
     # Logging
     logging.basicConfig()
+    formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s %(filename)s:%(funcName)s():%(lineno)d - %(message)s')
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
     logger = logging.getLogger()
-    logger.setLevel(logging.WARNING)
+    logger.setLevel(logging.INFO)
+    if (logger.hasHandlers()):
+        logger.handlers.clear()
+    logger.addHandler(handler)
 
+    # Start
     logger.warning('Starting')
     main(**vars(args))

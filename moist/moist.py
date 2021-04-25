@@ -29,6 +29,8 @@ for x in range(0,60):
     if int(val) != 0:
         print('Raw ADC Value: {}'.format(val))
         print('ADC Voltage: {} V'.format(chan0.voltage))
+    else:
+        print('Null')
     time.sleep(1)
 
 avg = statistics.mean(readings)
