@@ -7,6 +7,9 @@ Restart=always
 EnvironmentFile=/opt/raspberry-gardener/.env.sh
 WorkingDirectory=/opt/raspberry-gardener
 ExecStart=/opt/raspberry-gardener/sensor-server 
+StandardOutput=append:/var/log/raspberry-gardener/server.out.log
+StandardError=append:/var/log/raspberry-gardener/server.err.log
+
 
 [Install]
 WantedBy=multi-user.target 
