@@ -44,9 +44,10 @@ sudo systemctl start garden-sensor
 sudo systemctl enable garden-sensor # Autostart
 ```
 
-## Enable `I2C`
+## Enable `I2C` and `SPI`
 ```
 sudo raspi-config
 # 3 -> Interface
+# P4 -> SPI -> Enable
 # P5 -> I2C -> Enable
 ```

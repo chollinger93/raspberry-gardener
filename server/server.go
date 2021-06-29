@@ -91,11 +91,12 @@ type Sensor struct {
 	UvIx          float32
 	RawMoisture   int32
 	VoltMoisture  float32
+	Lumen         float32
 	MeasurementTs string
 }
 
 func (a *App) storeData(sensors []Sensor) error {
-	q := squirrel.Insert("data").Columns("sensorId", "tempC", "visLight", "irLight", "uvIx", "rawMoisture", "voltMoisture", "measurementTs", "lastUpdateTimestamp")
+	q := squirrel.Insert("data").Columns("sensorId", "tempC", "visLight", "irLight", "uvIx", "rawMoisture", "voltMoisture", "lumen", "measurementTs", "lastUpdateTimestamp")
 	for _, s := range sensors {
 		// RFC 3339
 		measurementTs, err := time.Parse(time.RFC3339, s.MeasurementTs)
@@ -103,7 +104,7 @@ func (a *App) storeData(sensors []Sensor) error {
 			zap.S().Errorf("Cannot parse TS %v to RFC3339", err)
 			continue
 		}
-		q = q.Values(s.SensorId, s.TempC, s.VisLight, s.IrLight, s.UvIx, s.RawMoisture, s.VoltMoisture, measurementTs, time.Now())
+		q = q.Values(s.SensorId, s.TempC, s.VisLight, s.IrLight, s.UvIx, s.RawMoisture, s.VoltMoisture, s.Lumen, measurementTs, time.Now())
 	}
 	sql, args, err := q.ToSql()
 	if err != nil {
