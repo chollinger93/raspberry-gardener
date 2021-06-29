@@ -1,7 +1,6 @@
 from board import *
 import busio
 import adafruit_mcp9808
-import SI1145.SI1145 as SI1145
 import os
 import time
 import busio

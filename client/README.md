@@ -43,3 +43,10 @@ sudo cp garden-sensor.service /etc/systemd/system/
 sudo systemctl start garden-sensor
 sudo systemctl enable garden-sensor # Autostart
 ```
+
+## Enable `I2C`
+```
+sudo raspi-config
+# 3 -> Interface
+# P5 -> I2C -> Enable
+```
