@@ -5,6 +5,7 @@ class MAX44009:
     # Thanks to https://github.com/rcolistete/MicroPython_MAX44009_driver/blob/master/max44009.py
     # With slight adjustments by chollinger93 for Python3 etc.
     MAX44009_I2C_DEFAULT_ADDRESS = 0x4A
+    MAX44009_I2C_FALLBACK_ADDRESS = 0x4B
 
     MAX44009_REG_CONFIGURATION = 0x02
     MAX44009_REG_LUX_HIGH_BYTE = 0x03
@@ -29,27 +30,53 @@ class MAX44009:
         if not bus:
             bus = SMBus(1)
         self.bus = bus
+        self.addr = self.MAX44009_I2C_DEFAULT_ADDRESS
+        self.configure()
 
     def configure(self):
-        self.bus.write_byte_data(self.MAX44009_I2C_DEFAULT_ADDRESS, 
-            self.MAX44009_REG_CONFIGURATION, 
-            self.MAX44009_REG_CONFIG_MANUAL_ON)
+        try:
+            self.bus.write_byte_data(self.addr, 
+                self.MAX44009_REG_CONFIGURATION, 
+                self.MAX44009_REG_CONFIG_MANUAL_ON)
+        except Exception as e:
+            print(e)
 
     def _convert_lumen(self, raw) -> float:
         exponent = (raw[0] & 0xF0) >> 4
         mantissa = ((raw[0] & 0x0F) << 4) | (raw[1] & 0x0F)
         return ((2 ** exponent) * mantissa) * 0.045
 
-    def read_lumen(self) -> float:
-        data = self.bus.read_i2c_block_data(0x4A, 0x03, 2)
+    def read_lumen(self)-> float:
+        data = self.bus.read_i2c_block_data(self.addr,
+            self.MAX44009_REG_LUX_HIGH_BYTE, 2)
         return self._convert_lumen(data)
     
+    def _switch_addr(self):
+        if self.addr == self.MAX44009_I2C_DEFAULT_ADDRESS:
+            self.addr = self.MAX44009_I2C_FALLBACK_ADDRESS
+        else:
+            self.addr = self.MAX44009_I2C_DEFAULT_ADDRESS
+
+    def read_lumen_with_retry(self):
+        # To avoid 121 I/O error
+        # Sometimes, the sensor listens on 0x4A,
+        # sometimes, on 0x4B (ಠ.ಠ)
+        try:
+            return self.read_lumen()
+        except Exception as e:
+            print(f'Error reading lumen on {self.addr}, retrying')
+            self._switch_addr()
+            self.configure()
+            return self.read_lumen_with_retry()
+
 if __name__ == '__main__':
     # Get I2C bus
     bus = SMBus(1)
+    # Let I2C settle
+    time.sleep(0.5)
     MAX44009 = MAX44009(bus)
     # Convert the data to lux
-    luminance = MAX44009.read_lumen()
+    luminance = MAX44009.read_lumen_with_retry()
 
     # Output data to screen
     print(f'Ambient Light luminance : {luminance} lux')
