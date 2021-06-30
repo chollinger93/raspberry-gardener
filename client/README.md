@@ -28,11 +28,12 @@ python3 monitor.py --rest_endpoint "http://server.local:7777"
 export REST_ENDPOINT="http://server.local:7777" # Customize
 export SENSORS="temp lumen moisture" # Customize
 
-sudo mkdir -p /opt/raspberry-gardener
-sudo touch /opt/raspberry-gardener/.env.sensor.sh
-echo "REST_ENDPOINT=$REST_ENDPOINT" | sudo tee /opt/raspberry-gardener/.env.sensor.sh
-echo "SENSORS=$SENSORS" | sudo tee /opt/raspberry-gardener/.env.sensor.sh
-sudo cp monitor.py /opt/raspberry-gardener/
+mkdir -p /opt/raspberry-gardener
+touch /opt/raspberry-gardener/.env.sensor.sh
+echo "REST_ENDPOINT=$REST_ENDPOINT" > /opt/raspberry-gardener/.env.sensor.sh
+echo "SENSORS=$SENSORS" >> /opt/raspberry-gardener/.env.sensor.sh
+cp monitor.py /opt/raspberry-gardener/
+cp -r max4409/ /opt/raspberry-gardener/
 
 # Install packages as sudo if the sensor runs as sudo
 sudo pip3 install -r requirements.txt
