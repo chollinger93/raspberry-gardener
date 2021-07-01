@@ -21,9 +21,9 @@ import (
 )
 
 var (
-	host                = flag.String("host", "localhost", "Hostname")
-	port                = flag.Int("port", 7777, "Port")
-	enableNotifications = flag.Bool("enableNotifications", false, "Enable email notifications. Requires STMP variables to be set.")
+	host                 = flag.String("host", "localhost", "Hostname")
+	port                 = flag.Int("port", 7777, "Port")
+	disableNotifications = flag.Bool("disableNotifications", false, "Disable email notifications. Requires STMP variables to be set.")
 )
 
 func mustGetenv(k string) string {
@@ -278,7 +278,7 @@ func main() {
 	// Check optional ones
 	// TODO: config file
 	var smtpCfg *SmtpConfig
-	if *enableNotifications {
+	if !*disableNotifications {
 		smtpCfg = NewSmtpConfig()
 	}
 

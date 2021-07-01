@@ -27,8 +27,7 @@ sudo systemctl enable raspberry-gardener # Autostart
 ```
 
 ## Unit Tests
-Export all variables from your `.env.sh`.
-
 ```
+source .env.sh
 go test ./*.go
 ```
