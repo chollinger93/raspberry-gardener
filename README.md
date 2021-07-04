@@ -1,7 +1,6 @@
 # raspi-gardener
 
 ![docs/hardware.jpg](docs/hardware.jpg)
-
 A collection of `Python` scripts to run a Raspberry Pi to monitor my vegetable patches. Sends data to a REST API written in `golang`.
 
 Written for an article on [my blog](https://chollinger.com/blog). Find [part 1 here](https://chollinger.com/blog/2021/04/raspberry-pi-gardening-monitoring-a-vegetable-garden-using-a-raspberry-pi-part-1) and [part 2 here](https://chollinger.com/blog/2021/07/raspberry-pi-gardening-monitoring-a-vegetable-garden-using-a-raspberry-pi-part-2-3d-printing/).
