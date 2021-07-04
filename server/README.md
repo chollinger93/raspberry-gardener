@@ -25,3 +25,9 @@ sudo cp raspberry-gardener.service /etc/systemd/system/
 sudo systemctl start raspberry-gardener
 sudo systemctl enable raspberry-gardener # Autostart
 ```
+
+## Unit Tests
+```
+source .env.sh
+go test ./*.go
+```
