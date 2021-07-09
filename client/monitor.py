@@ -17,6 +17,8 @@ import argparse
 from datetime import datetime, timezone
 import max44009.max44009 as m4
 from smbus2 import SMBus
+import SI1145
+import i2clcd
 
 class Sensor():
     def __init__(self, sensor: object) -> None:
@@ -63,14 +65,25 @@ class SI1145_S(Sensor):
 # Moisture: HD-38 (Aliexpress/Amazon)
 # pass spi_chan
 class HD38_S(Sensor):
+
+    def _translate_moisture(self, moisture):
+        if moisture <= 0.77:
+            return 'wet'
+        elif moisture > 0.77 and moisture <= 1.5:
+            return 'normal'
+        else:
+            return 'dry'
+
     def read_metric(self):
         raw_moisture = self.sensor.value
         volt_moisture = self.sensor.voltage
+        rel_moisture = self._translate_moisture(volt_moisture)
         if int(raw_moisture) == 0:
             return None
         return {
             'rawMoisture': raw_moisture, 
-            'voltMoisture': volt_moisture
+            'voltMoisture': volt_moisture,
+            'relMoisture': rel_moisture,
         }
 
 # Lumen: pass MAX44009
@@ -80,11 +93,23 @@ class MAX44009_S(Sensor):
             'lumen': self.sensor.read_lumen_with_retry()
             }
 
+class LCM106_S(Sensor):
+    def read_metric(self) -> dict:
+        # Don't return, just show things
+        return {}
+
+    def show(self, reading):
+        ln1 = 'Soil: {} [{:.2f}]'.format(reading['relMoisture'], reading['voltMoisture'])
+        ln2 = 'Temp: {:.2f}C'.format(reading['tempC'])
+        self.sensor.print_line(ln1, line=0)
+        self.sensor.print_line(ln2, line=1)
+
 __sensor_map__ = {
     'uv': SI1145_S,
     'temp': MCP9808_S,
     'lumen': MAX44009_S,
-    'moisture': HD38_S
+    'moisture': HD38_S,
+    'lcd': LCM106_S,
 }
 
 def get_machine_id():
@@ -96,6 +121,7 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
     buffer=[]
 
     # Create sensor objects
+    # TODO: plugin model for sensor creation
     sensors =  {}
     for k in sensor_keys:
         if k == 'uv':     
@@ -116,6 +142,11 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
             mcp = MCP.MCP3008(spi, cs)
             # create an analog input channel on pin 0
             sensor = AnalogIn(mcp, spi_in)
+        elif k == 'lcd':
+            lcd = i2clcd.i2clcd(i2c_bus=1, i2c_addr=0x27, lcd_width=16)
+            lcd.init()
+            lcd.clear()
+            sensor = lcd
         else:
             logger.error(f'Unknown sensor key {k}')
             continue
@@ -144,7 +175,7 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
                     sensor = sensors[k]
                     logger.debug(f'Reading {sensor}')
                     metrics = sensor.read_metric()
-                    if not metrics:
+                    if not metrics and k != 'lcd':
                         logger.error(f'No data for sensor {k}')
                         continue
                 except Exception as e:
@@ -153,6 +184,10 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
                 # Combine 
                 reading = {**reading, **metrics}
 
+            # Power the LCD, if it's enabled
+            # TODO: hard coded constraint - need both sensors
+            if 'lcd' in sensors and 'temp' in sensors and 'moisture' in sensors:
+                sensors['lcd'].show(reading)
     
             # Only send if its not disabled       
             if not disable_rest:

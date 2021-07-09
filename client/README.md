@@ -4,17 +4,20 @@ To be run on the Raspberry to collect data and send it to the REST endpoint (und
 
 ## Usage
 ```
-usage: monitor.py [-h] --rest_endpoint REST_ENDPOINT [--frequency FREQUENCY_S]
-                  [--buffer_max BUFFER_MAX] [--spi_in SPI_IN]
+usage: monitor.py [-h] --rest_endpoint REST_ENDPOINT
+                  [--sensors SENSORS [SENSORS ...]] [--frequency FREQUENCY_S]
+                  [--buffer_max BUFFER_MAX] [--spi_in SPI_IN] [--disable_rest]
 
 Collect sensor data
 
 optional arguments:
   -h, --help            show this help message and exit
   --rest_endpoint REST_ENDPOINT
+  --sensors SENSORS [SENSORS ...]
   --frequency FREQUENCY_S
   --buffer_max BUFFER_MAX
   --spi_in SPI_IN
+  --disable_rest
 ```
 
 e.g.
