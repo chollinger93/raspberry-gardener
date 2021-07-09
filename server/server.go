@@ -24,6 +24,7 @@ var (
 	host                 = flag.String("host", "localhost", "Hostname")
 	port                 = flag.Int("port", 7777, "Port")
 	disableNotifications = flag.Bool("disableNotifications", false, "Disable email notifications. Requires STMP variables to be set.")
+	disableStorage       = flag.Bool("disableStorage", false, "Disable SQL storage if only notifications are required.")
 )
 
 func mustGetenv(k string) string {
@@ -71,9 +72,13 @@ func newApp(smtpCfg *SmtpConfig) *App {
 	var err error
 	app := &App{}
 	//Database
-	app.DB, err = initTCPConnectionPool()
-	if err != nil {
-		log.Fatalf("initTCPConnectionPool: unable to connect: %v", err)
+	if *disableStorage {
+		zap.S().Warn("SQL storage is disabled")
+	} else {
+		app.DB, err = initTCPConnectionPool()
+		if err != nil {
+			log.Fatalf("initTCPConnectionPool: unable to connect: %v", err)
+		}
 	}
 	// Create table it it doesn't exist
 	// TODO:
@@ -151,24 +156,28 @@ func (a *App) RetrieveSensorDataHandler(w http.ResponseWriter, r *http.Request) 
 	// Whether we successfully store or not, go validate those sensors
 	go a.validateAllSensors(s)
 
-	err = a.storeData(s)
-	if err != nil {
-		zap.S().Error(err)
-		a.sendErr(w, "Bad Request", http.StatusBadRequest)
-		return
+	if !*disableStorage {
+		zap.S().Debug("Storing data is disabled")
+	} else {
+		err = a.storeData(s)
+		if err != nil {
+			zap.S().Error(err)
+			a.sendErr(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
 	}
 }
 
 // Hard coded alert values for now
 const MIN_TEMP_C = 5
-const MAX_TEMP_C = 40
+const MAX_TEMP_C = 60 // direct sun
 const LOW_MOISTURE_THRESHOLD_V = 2.2
 
 // Simple mutex pattern to avoid race conditions
 var mu sync.Mutex
 var notificationTimeouts = map[string]time.Time{}
 
-const NOTIFICATION_TIMEOUT = time.Duration(12 * time.Hour)
+const NOTIFICATION_TIMEOUT = time.Duration(24 * time.Hour)
 
 type SmtpConfig struct {
 	smtpUser              string
