@@ -27,6 +27,15 @@ python3 monitor.py --rest_endpoint "http://server.local:7777"
 ```
 
 ## Install
+
+### Automatic
+```
+Usage: ./install_client.sh --endpoint http://server.local:777 --sensors 'temp lumen moisture'
+```
+
+Please check `sbin/install_client.sh` for details.
+
+### Manual
 ```
 export REST_ENDPOINT="http://server.local:7777" # Customize
 export SENSORS="temp lumen moisture" # Customize
@@ -36,13 +45,13 @@ touch /opt/raspberry-gardener/.env.sensor.sh
 echo "REST_ENDPOINT=$REST_ENDPOINT" > /opt/raspberry-gardener/.env.sensor.sh
 echo "SENSORS=$SENSORS" >> /opt/raspberry-gardener/.env.sensor.sh
 cp monitor.py /opt/raspberry-gardener/
-cp -r max4409/ /opt/raspberry-gardener/
+cp -r max44009/ /opt/raspberry-gardener/
 
 # Install packages as sudo if the sensor runs as sudo
 sudo pip3 install -r requirements.txt
 ```
 
-## Systemd
+### Systemd
 ```
 sudo mkdir -p /var/log/raspberry-gardener/
 sudo cp garden-sensor.service /etc/systemd/system/
