@@ -70,7 +70,7 @@ class HD38_S(Sensor):
         if moisture <= 0.77:
             return 'wet'
         elif moisture > 0.77 and moisture <= 1.5:
-            return 'normal'
+            return 'ok'
         else:
             return 'dry'
 
@@ -124,6 +124,7 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
     # TODO: plugin model for sensor creation
     sensors =  {}
     for k in sensor_keys:
+        logger.debug('Sensor: {}'.format(k))
         if k == 'uv':     
             # UV
             sensor = SI1145.SI1145()
@@ -153,6 +154,10 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
         # Create
         sensors[k] = __sensor_map__[k](sensor=sensor)
     
+    if len(sensors) == 0:
+        logger.error('No sensors specified')
+        return
+
     while True:
         try:
             # Target JSON

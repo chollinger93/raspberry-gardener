@@ -57,6 +57,6 @@ apt install python3-smbus
 # Systemd service file
 mkdir -p /var/log/raspberry-gardener/
 systemctl daemon-reload
-cp garden-sensor.service /etc/systemd/system/
-systemctl start garden-sensor
-systemctl enable garden-sensor # Autostart
+cp raspberry-gardener.service /etc/systemd/system/
+systemctl start raspberry-gardener
+systemctl enable raspberry-gardener # Autostart

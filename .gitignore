@@ -146,5 +146,6 @@ moist/*
 server/.env.*sh
 !server/.env.sample.sh
 *.jpg
+!docs/*.jpg
 
 testbench/*

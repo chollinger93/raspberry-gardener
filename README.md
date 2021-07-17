@@ -28,3 +28,8 @@ Written for an article on [my blog](https://chollinger.com/blog). Find [part 1 h
 
 ## Install
 Please see the [client README.md](client/README.md) and [server README.md](server/README.md)
+
+## Optional
+A small LCD:
+
+![docs/lcd.jpg](docs/lcd.jpg)
