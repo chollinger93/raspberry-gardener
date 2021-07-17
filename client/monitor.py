@@ -220,8 +220,13 @@ if __name__ == '__main__':
     parser.add_argument('--disable_rest', dest='disable_rest', required=False, default=False, action='store_true')
     args = parser.parse_args()
     # Logging
-    logging.basicConfig()
-    formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s %(filename)s:%(funcName)s():%(lineno)d - %(message)s')
+    fmt='%(asctime)s - %(name)s - %(levelname)s %(filename)s:%(funcName)s():%(lineno)d - %(message)s'
+    logging.basicConfig(
+        format=fmt,
+        level=logging.INFO,
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    formatter = logging.Formatter(fmt=fmt)
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
     logger = logging.getLogger()

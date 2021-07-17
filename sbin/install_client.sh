@@ -51,6 +51,9 @@ cp -r max44009/ /opt/raspberry-gardener/
 # Install packages as sudo if the sensor runs as sudo
 pip3 install -r requirements.txt
 
+# Install apt dependencies
+apt install python3-smbus
+
 # Systemd service file
 mkdir -p /var/log/raspberry-gardener/
 systemctl daemon-reload
