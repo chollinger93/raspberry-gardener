@@ -124,7 +124,7 @@ func (a *App) storeData(sensors []Sensor) error {
 	}
 
 	res := a.DB.MustExec(sql, args...)
-	zap.S().Info(res)
+	zap.S().Debug(res)
 	return nil
 }
 
@@ -156,7 +156,7 @@ func (a *App) RetrieveSensorDataHandler(w http.ResponseWriter, r *http.Request) 
 	// Whether we successfully store or not, go validate those sensors
 	go a.validateAllSensors(s)
 
-	if !*disableStorage {
+	if *disableStorage {
 		zap.S().Debug("Storing data is disabled")
 	} else {
 		err = a.storeData(s)
