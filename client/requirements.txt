@@ -6,3 +6,5 @@ get-mac
 requests
 Adafruit-Blinka
 i2clcd
+pytest
+smbus
