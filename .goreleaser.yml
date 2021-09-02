@@ -9,5 +9,4 @@ builds:
       - amd64
       - arm64
     id: "raspberry-gardener"
-    dir: ./server
-    main: ./server
+    dir: server
