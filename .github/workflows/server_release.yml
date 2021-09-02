@@ -28,6 +28,6 @@ jobs:
           # GoReleaser version
           version: latest
           args: release --rm-dist
-          workdir: ./server
+          workdir: ./raspberry-gardener/server
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
