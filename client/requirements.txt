@@ -5,3 +5,6 @@ SI1145
 get-mac
 requests
 Adafruit-Blinka
+i2clcd
+pytest
+smbus

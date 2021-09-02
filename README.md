@@ -1,7 +1,10 @@
 # raspi-gardener
 
 ![docs/hardware.jpg](docs/hardware.jpg)
-A collection of `Python` scripts to run a Raspberry Pi to monitor my vegetable patches. Sends data to a REST API written in `golang`.
+
+`raspi-gardener` is a simple client-server module that allows a `Raspberry Pi` monitor my vegetable patches, as well as indoor plants.
+
+Contains a **`client`** module, written in `Python`, that talks to `i2c` and `spi` sensors on `Pi`, as well as a **`server`** module, written in `go`, that provides a `RESTful` endpoint, can store data to a database, and send notifications via email.
 
 Written for an article on [my blog](https://chollinger.com/blog). Find [part 1 here](https://chollinger.com/blog/2021/04/raspberry-pi-gardening-monitoring-a-vegetable-garden-using-a-raspberry-pi-part-1) and [part 2 here](https://chollinger.com/blog/2021/07/raspberry-pi-gardening-monitoring-a-vegetable-garden-using-a-raspberry-pi-part-2-3d-printing/).
 
@@ -28,3 +31,8 @@ Written for an article on [my blog](https://chollinger.com/blog). Find [part 1 h
 
 ## Install
 Please see the [client README.md](client/README.md) and [server README.md](server/README.md)
+
+## Optional
+A small LCD:
+
+![docs/lcd.jpg](docs/lcd.jpg)
