@@ -27,7 +27,6 @@ jobs:
         with:
           # GoReleaser version
           version: latest
-          args: release --rm-dist
-          workdir: ./raspberry-gardener/server
+          args: release -f .goreleaser.yml --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
