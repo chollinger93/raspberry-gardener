@@ -1,0 +1,12 @@
+project_name: raspberry-gardener
+builds:
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    id: "raspberry-gardener"
+    dir: .
+    main: ./server
