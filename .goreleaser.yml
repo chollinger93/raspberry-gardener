@@ -8,12 +8,5 @@ builds:
       - amd64
       - arm64
     id: "raspberry-gardener"
-    # Path to project's (sub)directory containing Go code.
-    # This is the working directory for the Go build command(s).
-    # Default is `.`.
     dir: ./server
-    # Path to main.go file or main package.
-    # Notice: when used with `gomod.proxy`, this must be a package.
-    #
-    # Default is `.`.
     main: ./server
