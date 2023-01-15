@@ -33,6 +33,9 @@ python3 monitor.py --rest_endpoint "http://server.local:7777"
 
 ## Install
 
+### Set up Pi
+Copy over `setup_pi_zero.sh` for a fresh install on a brand new Pi (or other Raspbian-like installation).
+
 ### Automatic
 ```
 Usage: ./install_client.sh --endpoint http://server.local:777 --sensors 'temp lumen moisture'

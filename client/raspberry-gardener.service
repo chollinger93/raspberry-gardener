@@ -6,10 +6,10 @@ Wants=network-online.target
 Restart=always
 WorkingDirectory=/opt/raspberry-gardener
 EnvironmentFile=/opt/raspberry-gardener/.env.sensor.sh
-ExecStart=/usr/bin/python3 /opt/raspberry-gardener/monitor.py --rest_endpoint $REST_ENDPOINT --sensors $SENSORS
+ExecStart=/usr/bin/python3 /opt/raspberry-gardener/monitor.py $OPTS --rest_endpoint $REST_ENDPOINT --sensors $SENSORS
 StandardOutput=append:/var/log/raspberry-gardener/monitor.out.log
 StandardError=append:/var/log/raspberry-gardener/monitor.err.log
 
 
 [Install]
-WantedBy=multi-user.target 
+WantedBy=multi-user.target
