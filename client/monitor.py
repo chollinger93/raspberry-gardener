@@ -88,7 +88,7 @@ class HD38_S(Sensor):
 
     def __init__(self, **kwargs):
         from board import SCK, MISO, MOSI, CE0
-        
+
         # SPI
         # create the spi bus
         spi = busio.SPI(clock=SCK, MISO=MISO, MOSI=MOSI)
@@ -166,7 +166,7 @@ class LCM106_LCD():
 
 
 def get_all_subclasses(cls) -> Set[object]:
-    """Gets all subclasses of a given class; Sensor in this cae 
+    """Gets all subclasses of a given class; Sensor in this cae
 
     See: https://github.com/chollinger93/scarecrow/blob/master/scarecrow_core/plugin_base/interceptor.py
 
@@ -262,7 +262,7 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
 
     # Create sensor objects
     sensors = create_sensors(*sensor_keys, spi_in=spi_in)
-    
+
     if len(sensors) == 0:
         logger.error('No sensors specified')
         return
@@ -274,7 +274,7 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
 
     while True:
         try:
-            # Read 
+            # Read
             reading = read_sensors(sensors, lcd)
 
             # Only send if its not disabled
@@ -301,14 +301,14 @@ def main(rest_endpoint: str, frequency_s=1, buffer_max=10, spi_in=0x0, disable_r
 fmt = '%(asctime)s - %(name)s - %(levelname)s %(filename)s:%(funcName)s():%(lineno)d - %(message)s'
 logging.basicConfig(
     format=fmt,
-    level=logging.INFO,
+    level=logging.WARN,
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 formatter = logging.Formatter(fmt=fmt)
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARN)
 if (logger.hasHandlers()):
     logger.handlers.clear()
 logger.addHandler(handler)
@@ -340,6 +340,6 @@ if __name__ == '__main__':
 
     # Start
     logger.warning('Starting')
-    
+
     main(args.rest_endpoint, args.frequency_s, args.buffer_max,
          args.spi_in, args.disable_rest, args.enable_lcd, *args.sensors)
